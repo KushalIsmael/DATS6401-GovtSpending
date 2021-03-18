@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compare Spending to GDP</title>
+    <script src="https://www.gstatic.com/charts/loader.js"></script>
+    <script>
+        google.charts.load('current', {'packages':['corechart']});
+        google.charts.setOnLoadCallback(drawAllSheets);
+
+        function drawAllSheets() {
+            drawSheetName('Spending GDP', 'SELECT A,B,C', gdpSpendingResponseHandler);
+            drawSheetName('Spending Compare', 'SELECT A,B,E', spendingCompareResponseHandler);
+            drawSheetName('Spending Compare', 'SELECT A,B', militaryCompareResponseHandler);
+            drawSheetName('Spending Compare', 'SELECT A,E', healthEduCompareResponseHandler);
+            drawSheetName('Spending PC', 'SELECT A,B,E,F,G', eduPCSpendingResponseHandler);
+            drawSheetName('Spending PC', 'SELECT A,C,E,F,G', healthPCSpendingResponseHandler);
+            drawSheetName('Spending PC', 'SELECT A,D,E,F,G', militaryPCSpendingResponseHandler);
+            drawSheetName('Change in Health Spending', 'SELECT A,B,D,F,H,J,L,N,P,R,T', changeHealthResponseHandler);
+            drawSheetName('Change in Health Spending', 'SELECT A,C,E,G,I,K,M,O,Q,S,U', perCentChangeHealthResponseHandler);
+            drawSheetName('Change in Education Spending', 'SELECT A,B,D,F,H,J,L,N,P,R,T', changeEduResponseHandler);
+            drawSheetName('Change in Education Spending', 'SELECT A,C,E,G,I,K,M,O,Q,S,U', perCentChangeEduResponseHandler);
+
+        } //drawAllSheets
+
+        function drawSheetName(sheetName, query, responseHandler){
+            var queryString = encodeURIComponent(query);
+            var query = new google.visualization.Query(
+                'https://docs.google.com/spreadsheets/d/16sbJsFkv1WIMcoc_MY5LXXjt9X3MxUuCGVODwkbKRIg/gviz/tq?sheet='
+                + sheetName + '&headers=1&tq=' + queryString);
+                
+            query.send(responseHandler);
+        } //drawSheetName
+
+        function gdpSpendingResponseHandler(response){
+            var data = response.getDataTable();
+            data.sort({column: 1, desc: true});
+
+            var options = {
+                title: "Average Percent of GDP Spent on Military, Education, and Health",
+                hAxis: {title: '% of GDP'},
+                legend: { position: 'bottom'},
+                isStacked: 'percent'
+            };
+            
+            var chart = new google.visualization.BarChart(document.getElementById('gdp_spending_div'));
+            chart.draw(data, options);
+        } //gdpSpendingResponseHandler
+
+        function spendingCompareResponseHandler(response){
+            var data = response.getDataTable();
+            data.sort({column: 2, desc: true});
+
+            var options = {
+                title: "Comparison of Total Military to Education and Health Expenditures",
+                hAxis: {title: 'Total Expenditures ($US Million)'},
+                legend: { position: 'bottom' },
+                isStacked: true,
+            };
+
+
+            var chart = new google.visualization.ColumnChart(document.getElementById('spending_compare_div'));
+            chart.draw(data, options);
+        } //spendingCompareResponseHandler
+
+        function militaryCompareResponseHandler(response){
+            var data = response.getDataTable();
+            data.sort({column: 1, desc: true});
+
+            var options = {
+                title: "Perecent of Total Military Expenditures from 2000 to 2017 by Country",
+                legend: { position: 'right' },
+                pieHole: 0.4,
+            };
+
+            var chart = new google.visualization.PieChart(document.getElementById('military_spending_compare_div'));
+            chart.draw(data, options);
+        } //militaryCompareResponseHandler
+
+        function healthEduCompareResponseHandler(response){
+            var data = response.getDataTable();
+            data.sort({column: 1, desc: true});
+
+            var options = {
+                title: "Perecent of Total Education and Health Expenditures from 2000 to 2017 by Country",
+                legend: { position: 'right' },
+                pieHole: 0.4,
+            };
+
+            var chart = new google.visualization.PieChart(document.getElementById('health_edu_spending_compare_div'));
+            chart.draw(data, options);
+        } //healthEduCompareResponseHandler
+        
+        function eduPCSpendingResponseHandler(response){
+            var data = response.getDataTable();
+
+            var options = {
+                title: "Education Expenditures Compared to GDP per Capita",
+                vAxis: {title: "Average GDP per Capita ($US/p)"},
+                hAxis: {title: "Average Education Expenditure per Capita ($US/p)"}
+            };
+
+            var chart = new google.visualization.BubbleChart(document.getElementById('edu_spendingpc_compare_div'));
+            chart.draw(data, options);
+        } //eduPCSpendingResponseHandler  
+
+        function healthPCSpendingResponseHandler(response){
+            var data = response.getDataTable();
+
+            var options = {
+                title: "Health Expenditures Compared to GDP per Capita",
+                vAxis: {title: "Average GDP per Capita ($US/p)"},
+                hAxis: {title: "Average Health Expenditure per Capita ($US/p)"}
+            };
+
+            var chart = new google.visualization.BubbleChart(document.getElementById('health_spendingpc_compare_div'));
+            chart.draw(data, options);
+        } //healthPCSpendingResponseHandler  
+
+        function militaryPCSpendingResponseHandler(response){
+            var data = response.getDataTable();
+
+            var options = {
+                title: "Military Expenditures Compared to GDP per Capita",
+                vAxis: {title: "Average GDP per Capita ($US/p)"},
+                hAxis: {title: "Average Military Expenditure per Capita ($US/p)"}
+            };
+
+            var chart = new google.visualization.BubbleChart(document.getElementById('military_spendingpc_compare_div'));
+            chart.draw(data, options);
+        } //militaryPCSpendingResponseHandler  
+
+        function changeHealthResponseHandler(response){
+            var data = response.getDataTable();
+
+            var options = {
+                title: "Change in Health Expenditures from 2000 to 2017",
+                vAxis: {title: "Difference in Health Expenditures from 2000 ($US Million)"},
+                hAxis: {title: "Year"}
+            };
+
+            var chart = new google.visualization.LineChart(document.getElementById('change_healthspending_div'));
+            chart.draw(data, options);
+        } //changeHealthResponseHandler
+
+        function perCentChangeHealthResponseHandler(response){
+            var data = response.getDataTable();
+
+            var options = {
+                title: "Percent Change in Health Expenditures from 2000 to 2017",
+                vAxis: {title: "Difference in Health Expenditures from 2000 (%)"},
+                hAxis: {title: "Year"}
+            };
+
+            var chart = new google.visualization.LineChart(document.getElementById('percentchange_healthspending_div'));
+            chart.draw(data, options);
+        } //perCentChangeHealthResponseHandler
+
+        function changeEduResponseHandler(response){
+            var data = response.getDataTable();
+
+            var options = {
+                title: "Change in Education Expenditures from 2000 to 2017",
+                vAxis: {title: "Difference in Education Expenditures from 2000 ($US Million)"},
+                hAxis: {title: "Year"}
+            };
+
+            var chart = new google.visualization.LineChart(document.getElementById('change_eduspending_div'));
+            chart.draw(data, options);
+        } //changeEduResponseHandler
+
+                function perCentChangeEduResponseHandler(response){
+            var data = response.getDataTable();
+
+
+            var options = {
+                title: "Percent Change in Education Expenditures from 2000 to 2017",
+                vAxis: {title: "Difference in Education Expenditures from 2000 (%)"},
+                hAxis: {title: "Year"}
+            };
+
+            var chart = new google.visualization.LineChart(document.getElementById('percentchange_eduspending_div'));
+            chart.draw(data, options);
+        } //perCentChangeEduResponseHandler
+    </script>
+</head>
+<body>
+    <h3>An Investigation of Military, Healthcare, and Education Spending from 2000 to 2017</h3>
+    <div id="gdp_spending_div" style="width: 1000px; height:500px;"></div>
+    <div id="spending_compare_div" style="width: 1000px; height:500px;"></div>
+    <div id="military_spending_compare_div" style="width: 1000px; height:500px;"></div>
+    <div id="health_edu_spending_compare_div" style="width: 1000px; height:500px;"></div>
+    <div id="edu_spendingpc_compare_div" style="width: 1000px; height:500px;"></div>
+    <div id="health_spendingpc_compare_div" style="width: 1000px; height:500px;"></div>
+    <div id="military_spendingpc_compare_div" style="width: 1000px; height:500px;"></div>
+    <div id="change_healthspending_div" style="width: 1000px; height:500px;"></div>
+    <div id="percentchange_healthspending_div" style="width: 1000px; height:500px;"></div>
+    <div id="change_eduspending_div" style="width: 1000px; height:500px;"></div>
+    <div id="percentchange_eduspending_div" style="width: 1000px; height:500px;"></div>
+</body>
+</html>
