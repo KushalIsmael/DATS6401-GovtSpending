@@ -5,7 +5,7 @@ This was the first project for George Washington University's DATS 6401 - Visual
 
 Data for the project was cleaned and combined using Excel and Python. The final datasets were stored in a Google Sheet.
 
-
+A video presentation of the project is available in the repository. Visualizations can be accessed at https://kushalismael.github.io/Government-Spending-Visualizations/
 
 ## Data Sources
 - World Bank
